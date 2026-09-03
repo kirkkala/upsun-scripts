@@ -1,0 +1,98 @@
+#!/bin/bash
+
+# upsun-db-dump — dumps the Upsun database to db_dumps directory for the current git branch environment
+
+set -euo pipefail
+
+COLOR_RED=$'\033[0;31m'
+COLOR_GREEN=$'\033[0;32m'
+COLOR_BLUE=$'\033[0;34m'
+COLOR_YELLOW=$'\033[1;33m'
+COLOR_RESET=$'\033[0m'
+
+show_help() {
+  cat << EOF
+
+${COLOR_GREEN}upsun-db-dump${COLOR_RESET} — dumps the Upsun database to db_dumps directory for the current git branch environment
+
+${COLOR_BLUE}USAGE${COLOR_RESET}
+  ${COLOR_GREEN}upsun-db-dump${COLOR_RESET}
+  ${COLOR_GREEN}upsun-db-dump${COLOR_RESET} --help
+
+${COLOR_BLUE}WHAT IT DOES${COLOR_RESET}
+  Runs from a git repository linked to an Upsun project.
+  Dumps the database for the current branch into:
+
+    ${COLOR_YELLOW}<repo>/drupal/db_dumps/${COLOR_RESET}  if that directory already exists
+    ${COLOR_YELLOW}<repo>/db_dumps/${COLOR_RESET}         otherwise
+
+  Filename:
+
+    ${COLOR_YELLOW}YYYY-MM-DD-HHMM-<project>-<branch>.sql${COLOR_RESET}
+
+${COLOR_BLUE}REQUIREMENTS${COLOR_RESET}
+  • git
+  • Upsun CLI (${COLOR_GREEN}upsun${COLOR_RESET}) — https://docs.upsun.com/administration/cli/
+
+EOF
+  exit 0
+}
+
+if [[ "${1:-}" == "--help" ]] || [[ "${1:-}" == "-h" ]] || [[ "${1:-}" == "help" ]]; then
+  show_help
+fi
+
+if ! command -v git >/dev/null 2>&1; then
+  echo -e "${COLOR_RED}Error: git is not installed.${COLOR_RESET}" >&2
+  exit 1
+fi
+
+if ! command -v upsun >/dev/null 2>&1; then
+  echo -e "${COLOR_RED}Error: Upsun CLI not found.${COLOR_RESET}" >&2
+  echo -e "Install it from: ${COLOR_BLUE}https://docs.upsun.com/administration/cli/${COLOR_RESET}" >&2
+  exit 1
+fi
+
+if ! root=$(git rev-parse --show-toplevel 2>/dev/null); then
+  echo -e "${COLOR_RED}Error: not inside a git repository.${COLOR_RESET}" >&2
+  echo "Run this from your Upsun project." >&2
+  exit 1
+fi
+
+branch=$(git -C "$root" branch --show-current)
+if [[ -z "$branch" ]]; then
+  echo -e "${COLOR_RED}Error: not on a git branch (detached HEAD?).${COLOR_RESET}" >&2
+  echo "Checkout a branch that matches an Upsun environment, then try again." >&2
+  exit 1
+fi
+
+if [[ ! -f "$root/.upsun/local/project.yaml" ]]; then
+  echo -e "${COLOR_YELLOW}This repo isn't linked to an Upsun project.${COLOR_RESET}" >&2
+  echo "" >&2
+  echo "Link it so upsun-db-dump can dump the current branch:" >&2
+  echo -e "  ${COLOR_GREEN}upsun project:set-remote${COLOR_RESET}" >&2
+  echo "" >&2
+  echo "For a one-time dump without linking, use:" >&2
+  echo -e "  ${COLOR_GREEN}upsun db:dump${COLOR_RESET}" >&2
+  exit 1
+fi
+
+dir="$root/db_dumps"
+if [[ -d "$root/drupal/db_dumps" ]]; then
+  dir="$root/drupal/db_dumps"
+fi
+
+mkdir -p "$dir"
+
+# Branch names can contain slashes; keep the filename on one path segment.
+safe_branch=${branch//\//-}
+file="$dir/$(date +%Y-%m-%d-%H%M)-$(basename "$root")-${safe_branch}.sql"
+
+echo -e "${COLOR_BLUE}Dumping database for branch ${COLOR_GREEN}${branch}${COLOR_RESET}"
+echo -e "${COLOR_BLUE}→ ${COLOR_YELLOW}${file}${COLOR_RESET}"
+echo ""
+
+upsun db:dump --file="$file" --environment="$branch"
+
+echo ""
+echo -e "${COLOR_GREEN}✓ Dump saved to ${file}${COLOR_RESET}"
