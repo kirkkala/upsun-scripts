@@ -4,6 +4,8 @@
 
 set -euo pipefail
 
+VERSION="0.1.0"
+
 COLOR_RED=$'\033[0;31m'
 COLOR_GREEN=$'\033[0;32m'
 COLOR_BLUE=$'\033[0;34m'
@@ -18,6 +20,7 @@ ${COLOR_GREEN}upsun-db-dump${COLOR_RESET} — dumps the Upsun database to db_dum
 ${COLOR_BLUE}USAGE${COLOR_RESET}
   ${COLOR_GREEN}upsun-db-dump${COLOR_RESET}
   ${COLOR_GREEN}upsun-db-dump${COLOR_RESET} --help
+  ${COLOR_GREEN}upsun-db-dump${COLOR_RESET} --version
 
 ${COLOR_BLUE}WHAT IT DOES${COLOR_RESET}
   Runs from a git repository linked to an Upsun project.
@@ -40,6 +43,11 @@ EOF
 
 if [[ "${1:-}" == "--help" ]] || [[ "${1:-}" == "-h" ]] || [[ "${1:-}" == "help" ]]; then
   show_help
+fi
+
+if [[ "${1:-}" == "--version" ]] || [[ "${1:-}" == "-v" ]]; then
+  echo "upsun-db-dump $VERSION"
+  exit 0
 fi
 
 if ! command -v git >/dev/null 2>&1; then

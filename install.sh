@@ -14,6 +14,7 @@ COLOR_RESET='\033[0m'
 INSTALL_DIR="/usr/local/bin"
 COMMAND_NAME="upsun-db-dump"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CHECKOUT=$(git -C "$SCRIPT_DIR" describe --tags --always 2>/dev/null || true)
 
 echo ""
 echo -e "${COLOR_BLUE}╔═══════════════════════════════════════════════════════╗${COLOR_RESET}"
@@ -35,10 +36,15 @@ fi
 # Check if already installed
 if [[ -f "${INSTALL_DIR}/${COMMAND_NAME}" ]]; then
   echo -e "${COLOR_YELLOW}⚠️  ${COMMAND_NAME} is already installed${COLOR_RESET}"
-  read -p "   Do you want to reinstall/update it? (y/N) " -n 1 -r
+  if [[ -n "$CHECKOUT" ]]; then
+    echo -e "   Running the installer again updates it to this checkout (${COLOR_GREEN}${CHECKOUT}${COLOR_RESET})."
+  else
+    echo -e "   Running the installer again updates it to this repo's version."
+  fi
+  read -p "   Update now? (y/N) " -n 1 -r
   echo
   if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo -e "\n${COLOR_BLUE}Installation cancelled.${COLOR_RESET}\n"
+    echo -e "\n${COLOR_BLUE}Update cancelled.${COLOR_RESET}\n"
     exit 0
   fi
   echo ""

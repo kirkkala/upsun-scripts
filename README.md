@@ -16,6 +16,7 @@ The command is installed to `/usr/local/bin/upsun-db-dump`. After that you can r
 
 ```bash
 upsun-db-dump
+upsun-db-dump --version
 ```
 
 ### What it does
