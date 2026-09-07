@@ -5,7 +5,9 @@
 set -euo pipefail
 
 # shellcheck source=upsun-scripts-common.sh
-source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/upsun-scripts-common.sh"
+_common="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/upsun-scripts-common.sh"
+[[ -f "$_common" ]] || _common="/usr/local/lib/kirkkala-upsun/upsun-scripts-common.sh"
+source "$_common"
 
 show_help() {
   cat << EOF
@@ -45,12 +47,9 @@ if [[ "${1:-}" == "--version" ]] || [[ "${1:-}" == "-v" ]]; then
   exit 0
 fi
 
-upsun_require_basics
+upsun_require_project
 upsun_require_branch
-upsun_require_project_link \
-  "upsun-db-dump can dump the current branch" \
-  "For a one-time dump without linking, use:" \
-  "upsun db:dump"
+upsun_require_project_link "upsun-db-dump can dump the current branch"
 
 dir="$root/db_dumps"
 if [[ -d "$root/drupal/db_dumps" ]]; then

@@ -8,7 +8,7 @@ Small CLI helpers for working with [Upsun](https://upsun.com/) projects.
 ./install.sh
 ```
 
-Commands are installed to `/usr/local/bin`. After that you can run them from any Upsun project repo.
+Scripts are installed to `/usr/local/lib/kirkkala-upsun`, with `upsun-db-dump` and `upsun-check-traffic` linked onto `/usr/local/bin`. After that you can run them from any Upsun project repo.
 
 ```bash
 upsun-db-dump

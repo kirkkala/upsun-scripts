@@ -11,23 +11,19 @@ COLOR_BLUE=$'\033[0;34m'
 COLOR_YELLOW=$'\033[1;33m'
 COLOR_RESET=$'\033[0m'
 
-upsun_require_git() {
+# Sets root. Requires git, Upsun CLI, and a git repo.
+upsun_require_project() {
   if ! command -v git >/dev/null 2>&1; then
     echo -e "${COLOR_RED}Error: git is not installed.${COLOR_RESET}" >&2
     exit 1
   fi
-}
 
-upsun_require_cli() {
   if ! command -v upsun >/dev/null 2>&1; then
     echo -e "${COLOR_RED}Error: Upsun CLI not found.${COLOR_RESET}" >&2
     echo -e "Install it from: ${COLOR_BLUE}https://docs.upsun.com/administration/cli/${COLOR_RESET}" >&2
     exit 1
   fi
-}
 
-# Sets root to the current git repository toplevel.
-upsun_require_repo() {
   if ! root=$(git rev-parse --show-toplevel 2>/dev/null); then
     echo -e "${COLOR_RED}Error: not inside a git repository.${COLOR_RESET}" >&2
     echo "Run this from your Upsun project." >&2
@@ -45,31 +41,13 @@ upsun_require_branch() {
   fi
 }
 
-# Requires .upsun/local/project.yaml.
-#   $1  why the user should link (appended after "Link it so")
-#   $2  optional extra hint line
-#   $3  optional command shown under that hint
+# Requires .upsun/local/project.yaml. $1 is why the user should link.
 upsun_require_project_link() {
-  local reason="$1"
-  local extra_hint="${2:-}"
-  local extra_command="${3:-}"
-
   if [[ ! -f "$root/.upsun/local/project.yaml" ]]; then
     echo -e "${COLOR_YELLOW}This repo isn't linked to an Upsun project.${COLOR_RESET}" >&2
     echo "" >&2
-    echo "Link it so ${reason}:" >&2
+    echo "Link it so ${1}:" >&2
     echo -e "  ${COLOR_GREEN}upsun project:set-remote${COLOR_RESET}" >&2
-    if [[ -n "$extra_hint" ]]; then
-      echo "" >&2
-      echo "$extra_hint" >&2
-      echo -e "  ${COLOR_GREEN}${extra_command}${COLOR_RESET}" >&2
-    fi
     exit 1
   fi
-}
-
-upsun_require_basics() {
-  upsun_require_git
-  upsun_require_cli
-  upsun_require_repo
 }

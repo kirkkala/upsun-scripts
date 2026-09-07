@@ -5,7 +5,9 @@
 set -euo pipefail
 
 # shellcheck source=upsun-scripts-common.sh
-source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/upsun-scripts-common.sh"
+_common="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/upsun-scripts-common.sh"
+[[ -f "$_common" ]] || _common="/usr/local/lib/kirkkala-upsun/upsun-scripts-common.sh"
+source "$_common"
 
 # IP prefixes to drop when --ignore-internal is set.
 ignore_ips=(
@@ -96,7 +98,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-upsun_require_basics
+upsun_require_project
 upsun_require_project_link "upsun-check-traffic can read origin logs"
 
 cd "$root"
