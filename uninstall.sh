@@ -11,6 +11,7 @@ COLOR_RESET='\033[0m'
 
 INSTALL_DIR="/usr/local/bin"
 COMMANDS=("upsun-db-dump" "upsun-check-traffic")
+COMMON_FILE="upsun-scripts-common.sh"
 
 targets=()
 for command_name in "${COMMANDS[@]}"; do
@@ -18,6 +19,9 @@ for command_name in "${COMMANDS[@]}"; do
     targets+=("${INSTALL_DIR}/${command_name}")
   fi
 done
+if [[ -f "${INSTALL_DIR}/${COMMON_FILE}" ]]; then
+  targets+=("${INSTALL_DIR}/${COMMON_FILE}")
+fi
 
 if [[ ${#targets[@]} -eq 0 ]]; then
   echo -e "${COLOR_YELLOW}No upsun-scripts commands are installed.${COLOR_RESET}"

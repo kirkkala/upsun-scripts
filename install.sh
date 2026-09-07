@@ -13,6 +13,7 @@ COLOR_RESET='\033[0m'
 
 INSTALL_DIR="/usr/local/bin"
 COMMANDS=("upsun-db-dump" "upsun-check-traffic")
+COMMON_FILE="upsun-scripts-common.sh"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CHECKOUT=$(git -C "$SCRIPT_DIR" describe --tags --always 2>/dev/null || true)
 
@@ -55,6 +56,11 @@ if [[ ${#already_installed[@]} -gt 0 ]]; then
   fi
   echo ""
 fi
+
+echo -e "${COLOR_BLUE}📦 Installing shared helpers...${COLOR_RESET}"
+$USE_SUDO cp "${SCRIPT_DIR}/src/${COMMON_FILE}" "${INSTALL_DIR}/${COMMON_FILE}"
+echo -e "${COLOR_GREEN}✓ Installed to ${INSTALL_DIR}/${COMMON_FILE}${COLOR_RESET}"
+echo ""
 
 for command_name in "${COMMANDS[@]}"; do
   echo -e "${COLOR_BLUE}📦 Installing ${command_name}...${COLOR_RESET}"
