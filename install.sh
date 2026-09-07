@@ -19,7 +19,7 @@ CHECKOUT=$(git -C "$SCRIPT_DIR" describe --tags --always 2>/dev/null || true)
 echo ""
 echo -e "${COLOR_BLUE}╔═══════════════════════════════════════════════════════╗${COLOR_RESET}"
 echo -e "${COLOR_BLUE}║                                                       ║${COLOR_RESET}"
-echo -e "${COLOR_BLUE}║         💾  Kirkkala's Upsun scripts  ✨              ║${COLOR_RESET}"
+echo -e "${COLOR_BLUE}║         💾  Kirkkala's Upsun commands  ✨             ║${COLOR_RESET}"
 echo -e "${COLOR_BLUE}║                                                       ║${COLOR_RESET}"
 echo -e "${COLOR_BLUE}╚═══════════════════════════════════════════════════════╝${COLOR_RESET}"
 echo -e "${COLOR_YELLOW}Unofficial helpers by kirkkala — not affiliated with Upsun.${COLOR_RESET}"
