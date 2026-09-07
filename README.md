@@ -2,22 +2,24 @@
 
 Small CLI helpers for working with [Upsun](https://upsun.com/) projects.
 
-## upsun-db-dump
-
-Dump database for the **current git branch environment** into a dated SQL file.
-
-### Install
+## Install
 
 ```bash
 ./install.sh
 ```
 
-The command is installed to `/usr/local/bin/upsun-db-dump`. After that you can run it from any Upsun project repo with
+Commands are installed to `/usr/local/bin`. After that you can run them from any Upsun project repo.
 
 ```bash
 upsun-db-dump
-upsun-db-dump --version
+upsun-check-traffic
 ```
+
+Use `--help` or `--version` on either command.
+
+## upsun-db-dump
+
+Dump database for the **current git branch environment** into a dated SQL file.
 
 ### What it does
 
@@ -32,14 +34,40 @@ into:
 - `<repo>/drupal/db_dumps/` if that directory already exists
 - `<repo>/db_dumps/` otherwise (created if needed)
 
-### Requirements
+## upsun-check-traffic
+
+Print the top IP addresses hitting **origin** on the **main** environment.
+
+Run it from the Upsun project you want to inspect:
+
+```bash
+upsun-check-traffic
+upsun-check-traffic 11
+upsun-check-traffic 20/Nov/2025:07
+upsun-check-traffic --ignore-internal
+```
+
+### What it does
+
+SSHs into the linked project's `main` environment, greps `/var/log/access.log` for a UTC time window, and prints the top IPs with [AbuseIPDB](https://www.abuseipdb.com/) links. Useful for spotting abusive traffic before blocking it on the CDN.
+
+Time window:
+
+- no argument — current hour minus 3 hours (server is UTC)
+- `11` — that hour of today (UTC)
+- `20/Nov/2025:07` — that hour (shorter prefixes widen the window)
+- `20/Nov/2025` — the whole day (slower)
+
+`--ignore-internal` skips the IP prefixes listed in the script (OPH Zscaler ranges).
+
+## Requirements
 
 - macOS or Linux
 - [git](https://git-scm.com/)
 - [Upsun CLI](https://docs.upsun.com/administration/cli/) (`upsun`)
-- A local clone of an Upsun project (run the command from inside it)
+- A local clone of an Upsun project, linked with `upsun project:set-remote` (run the commands from inside it)
 
-### Uninstall
+## Uninstall
 
 ```bash
 cd /path/to/upsun-scripts
