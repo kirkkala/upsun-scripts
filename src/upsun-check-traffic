@@ -9,12 +9,6 @@ _common="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/upsun-scripts-common.sh"
 [[ -f "$_common" ]] || _common="/usr/local/lib/kirkkala-upsun/upsun-scripts-common.sh"
 source "$_common"
 
-# IP prefixes to drop when --ignore-internal is set.
-ignore_ips=(
-  "147.161.18"      # OPH Zscaler IP's
-  "147.161.187.6"   # OPH Zscaler IP
-)
-
 show_help() {
   cat << EOF
 
@@ -25,8 +19,6 @@ ${COLOR_BLUE}USAGE${COLOR_RESET}
   ${COLOR_GREEN}upsun-check-traffic${COLOR_RESET}
   ${COLOR_GREEN}upsun-check-traffic${COLOR_RESET} ${COLOR_YELLOW}20/Nov/2025:07${COLOR_RESET}
   ${COLOR_GREEN}upsun-check-traffic${COLOR_RESET} ${COLOR_YELLOW}11${COLOR_RESET}
-  ${COLOR_GREEN}upsun-check-traffic${COLOR_RESET} --ignore-internal
-  ${COLOR_GREEN}upsun-check-traffic${COLOR_RESET} --ignore-internal ${COLOR_YELLOW}11${COLOR_RESET}
   ${COLOR_GREEN}upsun-check-traffic${COLOR_RESET} --help
   ${COLOR_GREEN}upsun-check-traffic${COLOR_RESET} --version
 
@@ -42,7 +34,6 @@ ${COLOR_BLUE}TIME WINDOW${COLOR_RESET}
   ${COLOR_YELLOW}20/Nov/2025${COLOR_RESET}     the whole day (slower)
 
 ${COLOR_BLUE}OPTIONS${COLOR_RESET}
-  --ignore-internal   skip IPs listed in this script (OPH Zscaler ranges)
   -h, --help          show this help
   -v, --version       show version
 
@@ -65,8 +56,6 @@ get_time_minus_3_hours() {
   fi
 }
 
-ignore_internal=false
-internal_excluded_note=""
 arg=""
 
 while [[ $# -gt 0 ]]; do
@@ -77,10 +66,6 @@ while [[ $# -gt 0 ]]; do
     --version|-v)
       echo "upsun-check-traffic $VERSION — $TOOL_NAME"
       exit 0
-      ;;
-    --ignore-internal|ignore-internal)
-      ignore_internal=true
-      shift
       ;;
     -*)
       echo -e "${COLOR_RED}Error: unknown option ${1}${COLOR_RESET}" >&2
@@ -115,21 +100,11 @@ fi
 
 escaped_time=$(echo "$search_time" | sed 's/[\/]/\\&/g')
 
-upsun_cmd="egrep -a \"$escaped_time\" /var/log/access.log | cut -d' ' -f1"
-
-if $ignore_internal; then
-  for ip_pattern in "${ignore_ips[@]}"; do
-    escaped_pattern=$(printf '%s\n' "$ip_pattern" | sed 's/[[\.*^$()+?{|]/\\&/g')
-    upsun_cmd="$upsun_cmd | grep -v \"^$escaped_pattern\""
-  done
-  internal_excluded_note="\n(internal traffic is excluded)"
-fi
-
-upsun_cmd="$upsun_cmd | sort | uniq -c | sort -nrk1 | head | awk '{print \$1, \"hits https://www.abuseipdb.com/check/\"\$2}'"
+upsun_cmd="egrep -a \"$escaped_time\" /var/log/access.log | cut -d' ' -f1 | sort | uniq -c | sort -nrk1 | head | awk '{print \$1, \"hits https://www.abuseipdb.com/check/\"\$2}'"
 
 echo -e "${COLOR_BLUE}${TOOL_NAME}${COLOR_RESET} · ${COLOR_GREEN}upsun-check-traffic${COLOR_RESET}"
 echo "************************************************************************"
-echo -e "Top list of IP addresses that accessed the site at $search_time (UTC)$internal_excluded_note"
+echo -e "Top list of IP addresses that accessed the site at $search_time (UTC)"
 echo "************************************************************************"
 
 if ! upsun e:ssh -e main -- "$upsun_cmd"; then

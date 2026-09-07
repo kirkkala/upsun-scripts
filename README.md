@@ -44,7 +44,6 @@ Run it from the Upsun project you want to inspect:
 upsun-check-traffic
 upsun-check-traffic 11
 upsun-check-traffic 20/Nov/2025:07
-upsun-check-traffic --ignore-internal
 ```
 
 ### What it does
@@ -57,8 +56,6 @@ Time window:
 - `11` — that hour of today (UTC)
 - `20/Nov/2025:07` — that hour (shorter prefixes widen the window)
 - `20/Nov/2025` — the whole day (slower)
-
-`--ignore-internal` skips the IP prefixes listed in the script (OPH Zscaler ranges).
 
 ## Requirements
 
