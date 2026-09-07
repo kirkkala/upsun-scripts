@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Installation script for upsun-scripts
+# Installer for Kirkkala's Upsun commands
 
 set -e
 
@@ -19,9 +19,10 @@ CHECKOUT=$(git -C "$SCRIPT_DIR" describe --tags --always 2>/dev/null || true)
 echo ""
 echo -e "${COLOR_BLUE}╔═══════════════════════════════════════════════════════╗${COLOR_RESET}"
 echo -e "${COLOR_BLUE}║                                                       ║${COLOR_RESET}"
-echo -e "${COLOR_BLUE}║           💾  upsun-scripts installer  ✨             ║${COLOR_RESET}"
+echo -e "${COLOR_BLUE}║         💾  Kirkkala's Upsun scripts  ✨              ║${COLOR_RESET}"
 echo -e "${COLOR_BLUE}║                                                       ║${COLOR_RESET}"
 echo -e "${COLOR_BLUE}╚═══════════════════════════════════════════════════════╝${COLOR_RESET}"
+echo -e "${COLOR_YELLOW}Unofficial helpers by kirkkala — not affiliated with Upsun.${COLOR_RESET}"
 echo ""
 
 if [[ ! -w "$BIN_DIR" || ! -w "$(dirname "$LIB_DIR")" ]]; then
@@ -77,7 +78,7 @@ echo -e "${COLOR_GREEN}║                                                      
 echo -e "${COLOR_GREEN}╚═══════════════════════════════════════════════════════╝${COLOR_RESET}"
 echo ""
 
-echo -e "${COLOR_BLUE}You're all set! From any Upsun project:${COLOR_RESET}"
+echo -e "${COLOR_BLUE}Kirkkala's Upsun commands are ready. From any Upsun project:${COLOR_RESET}"
 echo -e "  ${COLOR_GREEN}upsun-db-dump${COLOR_RESET}           dump the current branch database"
 echo -e "  ${COLOR_GREEN}upsun-check-traffic${COLOR_RESET}     top origin IPs on main"
 echo ""

@@ -1,6 +1,6 @@
-# upsun-scripts
+# Kirkkala's Upsun commands
 
-Small CLI helpers for working with [Upsun](https://upsun.com/) projects.
+Unofficial CLI helpers for [Upsun](https://upsun.com/) projects, by [kirkkala](https://github.com/kirkkala). Not affiliated with Upsun.
 
 ## Install
 

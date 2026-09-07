@@ -13,6 +13,7 @@ show_help() {
   cat << EOF
 
 ${COLOR_GREEN}upsun-db-dump${COLOR_RESET} — dumps the Upsun database to db_dumps directory for the current git branch environment
+${COLOR_BLUE}${TOOL_NAME}${COLOR_RESET} — unofficial helpers, not affiliated with Upsun.
 
 ${COLOR_BLUE}USAGE${COLOR_RESET}
   ${COLOR_GREEN}upsun-db-dump${COLOR_RESET}
@@ -43,7 +44,7 @@ if [[ "${1:-}" == "--help" ]] || [[ "${1:-}" == "-h" ]] || [[ "${1:-}" == "help"
 fi
 
 if [[ "${1:-}" == "--version" ]] || [[ "${1:-}" == "-v" ]]; then
-  echo "upsun-db-dump $VERSION"
+  echo "upsun-db-dump $VERSION — $TOOL_NAME"
   exit 0
 fi
 
@@ -62,6 +63,7 @@ mkdir -p "$dir"
 safe_branch=${branch//\//-}
 file="$dir/$(date +%Y-%m-%d-%H%M)-$(basename "$root")-${safe_branch}.sql"
 
+echo -e "${COLOR_BLUE}${TOOL_NAME}${COLOR_RESET} · ${COLOR_GREEN}upsun-db-dump${COLOR_RESET}"
 echo -e "${COLOR_BLUE}Dumping database for branch ${COLOR_GREEN}${branch}${COLOR_RESET}"
 echo -e "${COLOR_BLUE}→ ${COLOR_YELLOW}${file}${COLOR_RESET}"
 echo ""

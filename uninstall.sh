@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Remove kirkkala-upsun commands and library files
+# Remove Kirkkala's Upsun commands and library files
 
 set -e
 
@@ -25,7 +25,7 @@ do
 done
 
 if [[ ${#targets[@]} -eq 0 ]]; then
-  echo -e "${COLOR_YELLOW}No upsun-scripts commands are installed.${COLOR_RESET}"
+  echo -e "${COLOR_YELLOW}Kirkkala's Upsun commands are not installed.${COLOR_RESET}"
   exit 0
 fi
 
