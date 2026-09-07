@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Installer for Kirkkala's Upsun commands
+# Installer for Kirkkala's Upsun scripts
 #
 # From a checkout:  ./install.sh
 # Without git:      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/kirkkala/upsun-scripts/main/install.sh)"
@@ -57,16 +57,19 @@ resolve_sources() {
   echo ""
 }
 
+resolve_sources
+# shellcheck source=src/upsun-scripts-common.sh
+source "${SRC_DIR}/${COMMON_FILE}"
+
 echo ""
 echo -e "${COLOR_BLUE}╔═══════════════════════════════════════════════════════╗${COLOR_RESET}"
 echo -e "${COLOR_BLUE}║                                                       ║${COLOR_RESET}"
-echo -e "${COLOR_BLUE}║         💾  Kirkkala's Upsun commands  ✨             ║${COLOR_RESET}"
+echo -e "${COLOR_BLUE}║         💾  ${TOOL_NAME}  ✨              ║${COLOR_RESET}"
 echo -e "${COLOR_BLUE}║                                                       ║${COLOR_RESET}"
 echo -e "${COLOR_BLUE}╚═══════════════════════════════════════════════════════╝${COLOR_RESET}"
 echo -e "${COLOR_YELLOW}Unofficial helpers by kirkkala — not affiliated with Upsun.${COLOR_RESET}"
 echo ""
 
-resolve_sources
 
 if [[ ! -w "$BIN_DIR" || ! -w "$(dirname "$LIB_DIR")" ]]; then
   echo -e "${COLOR_YELLOW}⚠️  Installing to ${LIB_DIR} requires elevated privileges${COLOR_RESET}"
@@ -125,7 +128,7 @@ echo -e "${COLOR_GREEN}║                                                      
 echo -e "${COLOR_GREEN}╚═══════════════════════════════════════════════════════╝${COLOR_RESET}"
 echo ""
 
-echo -e "${COLOR_BLUE}Kirkkala's Upsun commands are ready. From any Upsun project:${COLOR_RESET}"
+echo -e "${COLOR_BLUE}${TOOL_NAME} are ready. From any Upsun project:${COLOR_RESET}"
 echo -e "  ${COLOR_GREEN}upsun-db-dump${COLOR_RESET}           dump the current branch database"
 echo -e "  ${COLOR_GREEN}upsun-check-traffic${COLOR_RESET}     top origin IPs on main"
 echo ""

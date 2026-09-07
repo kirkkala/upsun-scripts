@@ -1,13 +1,14 @@
 #!/bin/bash
 
-# Remove Kirkkala's Upsun commands and library files
+# Remove Kirkkala's Upsun scripts and library files
 
 set -e
 
-COLOR_GREEN='\033[0;32m'
-COLOR_BLUE='\033[0;34m'
-COLOR_YELLOW='\033[1;33m'
-COLOR_RESET='\033[0m'
+_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+_common="${_dir}/src/upsun-scripts-common.sh"
+[[ -f "$_common" ]] || _common="${_dir}/upsun-scripts-common.sh"
+# shellcheck source=src/upsun-scripts-common.sh
+source "$_common"
 
 BIN_DIR="/usr/local/bin"
 LIB_DIR="/usr/local/lib/kirkkala-upsun"
@@ -25,7 +26,7 @@ do
 done
 
 if [[ ${#targets[@]} -eq 0 ]]; then
-  echo -e "${COLOR_YELLOW}Kirkkala's Upsun commands are not installed.${COLOR_RESET}"
+  echo -e "${COLOR_YELLOW}${TOOL_NAME} are not installed.${COLOR_RESET}"
   exit 0
 fi
 

@@ -1,4 +1,4 @@
-# Kirkkala's Upsun commands
+# Kirkkala's Upsun scripts
 
 Unofficial CLI helpers for [Upsun](https://upsun.com/) projects, by [kirkkala](https://github.com/kirkkala). Not affiliated with Upsun.
 
