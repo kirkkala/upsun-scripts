@@ -4,7 +4,17 @@ Unofficial CLI helpers for [Upsun](https://upsun.com/) projects, by [kirkkala](h
 
 ## Install
 
+Install from GitHub:
+
 ```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/kirkkala/upsun-scripts/main/install.sh)"
+```
+
+To work on the scripts (when contributing):
+
+```bash
+git clone https://github.com/kirkkala/upsun-scripts.git
+cd upsun-scripts
 ./install.sh
 ```
 
@@ -67,12 +77,13 @@ Time window:
 ## Uninstall
 
 ```bash
-cd /path/to/upsun-scripts
-./uninstall.sh
+/usr/local/lib/kirkkala-upsun/uninstall.sh
 ```
+
+From a local checkout, just use `./uninstall.sh`.
 
 ## Releasing
 
 `VERSION` lives in `src/upsun-scripts-common.sh`.
 
-When you cut a GitHub release, bump that value to match the tag, commit it, then create the tag/release as usual (`0.2.0`). Re-run `./install.sh` to update on local.
+When cutting a GitHub release, bump version, commit and create the tag/release as usual.
