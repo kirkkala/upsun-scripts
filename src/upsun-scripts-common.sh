@@ -1,10 +1,15 @@
 #!/bin/bash
+# shellcheck disable=SC2034
 
 # Shared helpers for upsun-scripts commands. Sourced, not executed.
 
 # Single source of truth for --version. Bump this when tagging a release.
 VERSION="0.2.1"
 TOOL_NAME="Kirkkala's Upsun scripts"
+
+# Set by upsun_require_project / upsun_require_branch for the calling command.
+root=""
+branch=""
 
 COLOR_RED=$'\033[0;31m'
 COLOR_GREEN=$'\033[0;32m'

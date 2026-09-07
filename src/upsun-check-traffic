@@ -4,9 +4,9 @@
 
 set -euo pipefail
 
-# shellcheck source=upsun-scripts-common.sh
 _common="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/upsun-scripts-common.sh"
 [[ -f "$_common" ]] || _common="/usr/local/lib/kirkkala-upsun/upsun-scripts-common.sh"
+# shellcheck source=src/upsun-scripts-common.sh
 source "$_common"
 
 show_help() {
