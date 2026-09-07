@@ -1,0 +1,116 @@
+#!/bin/bash
+
+# upsun-check-traffic — prints top origin IPs from the main environment access log
+
+set -euo pipefail
+
+# shellcheck source=upsun-scripts-common.sh
+_common="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/upsun-scripts-common.sh"
+[[ -f "$_common" ]] || _common="/usr/local/lib/kirkkala-upsun/upsun-scripts-common.sh"
+source "$_common"
+
+show_help() {
+  cat << EOF
+
+${COLOR_GREEN}upsun-check-traffic${COLOR_RESET} — top IP addresses hitting origin on the main environment
+${COLOR_BLUE}${TOOL_NAME}${COLOR_RESET} — unofficial helpers, not affiliated with Upsun.
+
+${COLOR_BLUE}USAGE${COLOR_RESET}
+  ${COLOR_GREEN}upsun-check-traffic${COLOR_RESET}
+  ${COLOR_GREEN}upsun-check-traffic${COLOR_RESET} ${COLOR_YELLOW}20/Nov/2025:07${COLOR_RESET}
+  ${COLOR_GREEN}upsun-check-traffic${COLOR_RESET} ${COLOR_YELLOW}11${COLOR_RESET}
+  ${COLOR_GREEN}upsun-check-traffic${COLOR_RESET} --help
+  ${COLOR_GREEN}upsun-check-traffic${COLOR_RESET} --version
+
+${COLOR_BLUE}WHAT IT DOES${COLOR_RESET}
+  Runs from a git repository linked to an Upsun project.
+  SSHs into the ${COLOR_YELLOW}main${COLOR_RESET} environment and greps ${COLOR_YELLOW}/var/log/access.log${COLOR_RESET}
+  for the given UTC window, then prints the top IPs with AbuseIPDB links.
+
+${COLOR_BLUE}TIME WINDOW${COLOR_RESET}
+  No argument     current hour minus 3 hours (server is UTC)
+  ${COLOR_YELLOW}11${COLOR_RESET}              that hour of today (UTC)
+  ${COLOR_YELLOW}20/Nov/2025:07${COLOR_RESET}  that hour (simple grep; shorter prefixes widen the window)
+  ${COLOR_YELLOW}20/Nov/2025${COLOR_RESET}     the whole day (slower)
+
+${COLOR_BLUE}OPTIONS${COLOR_RESET}
+  -h, --help          show this help
+  -v, --version       show version
+
+${COLOR_BLUE}REQUIREMENTS${COLOR_RESET}
+  • git
+  • Upsun CLI (${COLOR_GREEN}upsun${COLOR_RESET}) — https://docs.upsun.com/administration/cli/
+
+EOF
+  exit 0
+}
+
+# Need this because the server is running on a different timezone.
+get_time_minus_3_hours() {
+  if date --version >/dev/null 2>&1; then
+    # Linux (GNU date)
+    LC_TIME=en_US.UTF-8 date -d "-3 hours" +"%d/%b/%Y:%H"
+  else
+    # macOS (BSD date)
+    LC_TIME=en_US.UTF-8 date -v -3H +"%d/%b/%Y:%H"
+  fi
+}
+
+arg=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --help|-h|help)
+      show_help
+      ;;
+    --version|-v)
+      echo "upsun-check-traffic $VERSION — $TOOL_NAME"
+      exit 0
+      ;;
+    -*)
+      echo -e "${COLOR_RED}Error: unknown option ${1}${COLOR_RESET}" >&2
+      echo "Try: upsun-check-traffic --help" >&2
+      exit 1
+      ;;
+    *)
+      if [[ -n "$arg" ]]; then
+        echo -e "${COLOR_RED}Error: unexpected extra argument ${1}${COLOR_RESET}" >&2
+        echo "Try: upsun-check-traffic --help" >&2
+        exit 1
+      fi
+      arg="$1"
+      shift
+      ;;
+  esac
+done
+
+upsun_require_project
+upsun_require_project_link "upsun-check-traffic can read origin logs"
+
+cd "$root"
+
+if [[ -z "$arg" ]]; then
+  search_time=$(get_time_minus_3_hours)
+elif [[ $arg =~ ^[0-9]{2}$ ]]; then
+  current_date=$(LC_TIME=en_US.UTF-8 date +"%d/%b/%Y")
+  search_time="${current_date}:$arg"
+else
+  search_time="$arg"
+fi
+
+escaped_time=$(echo "$search_time" | sed 's/[\/]/\\&/g')
+
+upsun_cmd="egrep -a \"$escaped_time\" /var/log/access.log | cut -d' ' -f1 | sort | uniq -c | sort -nrk1 | head | awk '{print \$1, \"hits https://www.abuseipdb.com/check/\"\$2}'"
+
+echo -e "${COLOR_BLUE}${TOOL_NAME}${COLOR_RESET} · ${COLOR_GREEN}upsun-check-traffic${COLOR_RESET}"
+echo "************************************************************************"
+echo -e "Top list of IP addresses that accessed the site at $search_time (UTC)"
+echo "************************************************************************"
+
+if ! upsun e:ssh -e main -- "$upsun_cmd"; then
+  echo -e "${COLOR_RED}Error: Failed to read access logs from the main environment.${COLOR_RESET}" >&2
+  echo "Check that you have access to this Upsun project and the main environment exists." >&2
+  exit 1
+fi
+
+echo "************************************************************************"

@@ -1,23 +1,25 @@
-# upsun-scripts
+# Kirkkala's Upsun commands
 
-Small CLI helpers for working with [Upsun](https://upsun.com/) projects.
+Unofficial CLI helpers for [Upsun](https://upsun.com/) projects, by [kirkkala](https://github.com/kirkkala). Not affiliated with Upsun.
 
-## upsun-db-dump
-
-Dump database for the **current git branch environment** into a dated SQL file.
-
-### Install
+## Install
 
 ```bash
 ./install.sh
 ```
 
-The command is installed to `/usr/local/bin/upsun-db-dump`. After that you can run it from any Upsun project repo with
+Scripts are installed to `/usr/local/lib/kirkkala-upsun`, with `upsun-db-dump` and `upsun-check-traffic` linked onto `/usr/local/bin`. After that you can run them from any Upsun project repo.
 
 ```bash
 upsun-db-dump
-upsun-db-dump --version
+upsun-check-traffic
 ```
+
+Use `--help` or `--version` on either command.
+
+## upsun-db-dump
+
+Dump database for the **current git branch environment** into a dated SQL file.
 
 ### What it does
 
@@ -32,16 +34,45 @@ into:
 - `<repo>/drupal/db_dumps/` if that directory already exists
 - `<repo>/db_dumps/` otherwise (created if needed)
 
-### Requirements
+## upsun-check-traffic
+
+Print the top IP addresses hitting **origin** on the **main** environment.
+
+Run it from the Upsun project you want to inspect:
+
+```bash
+upsun-check-traffic
+upsun-check-traffic 11
+upsun-check-traffic 20/Nov/2025:07
+```
+
+### What it does
+
+SSHs into the linked project's `main` environment, greps `/var/log/access.log` for a UTC time window, and prints the top IPs with [AbuseIPDB](https://www.abuseipdb.com/) links. Useful for spotting abusive traffic before blocking it on the CDN.
+
+Time window:
+
+- no argument — current hour minus 3 hours (server is UTC)
+- `11` — that hour of today (UTC)
+- `20/Nov/2025:07` — that hour (shorter prefixes widen the window)
+- `20/Nov/2025` — the whole day (slower)
+
+## Requirements
 
 - macOS or Linux
 - [git](https://git-scm.com/)
 - [Upsun CLI](https://docs.upsun.com/administration/cli/) (`upsun`)
-- A local clone of an Upsun project (run the command from inside it)
+- A local clone of an Upsun project, linked with `upsun project:set-remote` (run the commands from inside it)
 
-### Uninstall
+## Uninstall
 
 ```bash
 cd /path/to/upsun-scripts
 ./uninstall.sh
 ```
+
+## Releasing
+
+`VERSION` lives in `src/upsun-scripts-common.sh`.
+
+When you cut a GitHub release, bump that value to match the tag, commit it, then create the tag/release as usual (`0.2.0`). Re-run `./install.sh` to update on local.
