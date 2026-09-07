@@ -2,6 +2,9 @@
 
 # Shared helpers for upsun-scripts commands. Sourced, not executed.
 
+# Single source of truth for --version. Bump this when tagging a release.
+VERSION="0.2.0"
+
 COLOR_RED=$'\033[0;31m'
 COLOR_GREEN=$'\033[0;32m'
 COLOR_BLUE=$'\033[0;34m'

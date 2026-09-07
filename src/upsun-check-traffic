@@ -4,8 +4,6 @@
 
 set -euo pipefail
 
-VERSION="0.1.0"
-
 # shellcheck source=upsun-scripts-common.sh
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/upsun-scripts-common.sh"
 

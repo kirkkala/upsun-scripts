@@ -73,3 +73,9 @@ Time window:
 cd /path/to/upsun-scripts
 ./uninstall.sh
 ```
+
+## Releasing
+
+`VERSION` lives in `src/upsun-scripts-common.sh`.
+
+When you cut a GitHub release, bump that value to match the tag, commit it, then create the tag/release as usual (`0.2.0`). Re-run `./install.sh` to update on local.
