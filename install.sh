@@ -38,10 +38,10 @@ resolve_sources() {
     return
   fi
 
-  command -v curl >/dev/null && command -v tar >/dev/null || {
+  if ! command -v curl >/dev/null || ! command -v tar >/dev/null; then
     echo -e "${COLOR_RED}Error: curl and tar are required to install.${COLOR_RESET}" >&2
     exit 1
-  }
+  fi
 
   echo -e "${COLOR_BLUE}📥 Downloading ${GITHUB_REPO}...${COLOR_RESET}"
   work=$(mktemp -d)

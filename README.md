@@ -82,6 +82,23 @@ Time window:
 
 From a local checkout, just use `./uninstall.sh`.
 
+## Tests
+
+CI runs [ShellCheck](https://www.shellcheck.net/) and a few [Bats](https://github.com/bats-core/bats-core) tests on every pull request.
+
+Same job locally with [nektos/act](https://github.com/nektos/act) (Docker required):
+
+```bash
+act -j test
+```
+
+Or install the tools and run them directly:
+
+```bash
+shellcheck install.sh uninstall.sh src/upsun-db-dump src/upsun-check-traffic src/upsun-scripts-common.sh
+bats tests
+```
+
 ## Releasing
 
 `VERSION` lives in `src/upsun-scripts-common.sh`.

@@ -35,7 +35,7 @@ for target in "${targets[@]}"; do
   echo "  $target"
 done
 
-read -p "$(echo -e ${COLOR_YELLOW})Continue? (y/N) $(echo -e ${COLOR_RESET})" -n 1 -r
+read -p "$(echo -e "${COLOR_YELLOW}")Continue? (y/N) $(echo -e "${COLOR_RESET}")" -n 1 -r
 echo
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
   echo -e "${COLOR_BLUE}Cancelled.${COLOR_RESET}"
