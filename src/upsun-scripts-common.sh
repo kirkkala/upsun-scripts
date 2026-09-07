@@ -3,7 +3,7 @@
 # Shared helpers for upsun-scripts commands. Sourced, not executed.
 
 # Single source of truth for --version. Bump this when tagging a release.
-VERSION="0.2.0"
+VERSION="0.2.1"
 TOOL_NAME="Kirkkala's Upsun commands"
 
 COLOR_RED=$'\033[0;31m'
